@@ -8,9 +8,9 @@ import com.turnero.entity.Turno;
 import com.turnero.exception.ConflictException;
 import com.turnero.repository.PacienteRepository;
 import com.turnero.repository.TurnoRepository;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -52,7 +52,7 @@ public class TurnoResource {
     }
 
     @POST
-    @Transactional
+    @WithTransaction
     public Uni<Response> crear(@Valid TurnoDTO dto) {
         if (dto.pacienteId == null || dto.especialidad == null || dto.fecha == null || dto.hora == null) {
             return Uni.createFrom().failure(new jakarta.validation.ValidationException("Faltan campos obligatorios"));
@@ -81,7 +81,7 @@ public class TurnoResource {
 
     @PUT
     @Path("/{id}/estado")
-    @Transactional
+    @WithTransaction
     public Uni<Turno> cambiarEstado(@PathParam("id") Long id, @Valid CambioEstadoDTO dto) {
         if (dto.estado == null) {
             return Uni.createFrom().failure(new jakarta.validation.ValidationException("El estado es obligatorio"));
@@ -97,7 +97,7 @@ public class TurnoResource {
 
     @DELETE
     @Path("/{id}")
-    @Transactional
+    @WithTransaction
     public Uni<Response> eliminar(@PathParam("id") Long id) {
         return turnoRepository.buscarPorId(id)
                 .onItem().ifNull().failWith(() -> new NotFoundException("Turno no encontrado: " + id))

@@ -4,6 +4,7 @@ import com.turnero.dto.PacienteDTO;
 import com.turnero.entity.Paciente;
 import com.turnero.exception.ConflictException;
 import com.turnero.repository.PacienteRepository;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -36,14 +37,8 @@ public class PacienteResource {
     }
 
     @POST
-    @Transactional
+    @WithTransaction
     public Uni<Response> crear(@Valid PacienteDTO dto) {
-        if (dto.nombre == null || dto.nombre.isBlank()
-                || dto.apellido == null || dto.apellido.isBlank()
-                || dto.dni == null || dto.dni.isBlank()
-                || dto.email == null || dto.email.isBlank()) {
-            return Uni.createFrom().failure(new jakarta.validation.ValidationException("Faltan campos obligatorios"));
-        }
 
         return pacienteRepository.buscarPorDni(dto.dni)
                 .onItem().transformToUni(existente -> {
