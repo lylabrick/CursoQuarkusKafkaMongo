@@ -9,6 +9,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 
+import com.turnero.exception.NotFoundException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -25,6 +26,7 @@ public class PacienteResource {
 
     @GET
     public Uni<List<Paciente>> listar() {
+
         return pacienteRepository.listarTodos();
     }
 
