@@ -7,7 +7,6 @@ import com.turnero.repository.PacienteRepository;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import jakarta.ws.rs.*;
@@ -59,7 +58,7 @@ public class PacienteResource {
 
     @PUT
     @Path("/{id}")
-    @Transactional
+    @WithTransaction
     public Uni<Paciente> actualizar(@PathParam("id") Long id, @Valid PacienteDTO dto) {
         return pacienteRepository.buscarPorId(id)
                 .onItem().ifNull().failWith(() -> new NotFoundException("Paciente no encontrado: " + id))
