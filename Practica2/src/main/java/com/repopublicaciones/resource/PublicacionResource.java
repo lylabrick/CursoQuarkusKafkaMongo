@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.jboss.resteasy.reactive.RestQuery;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class PublicacionResource {
     public Uni<Response> buscarPorId(@PathParam("id") String id) {
         return repository.findById(new ObjectId(id))
                 .onItem().ifNotNull().transform(pub -> Response.ok(pub).build())
-                .onItem().ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @GET
@@ -67,7 +68,7 @@ public class PublicacionResource {
     @Path("/estadisticas")
     public Uni<List<EstadisticaTipo>> estadisticas() {
         return Uni.combine().all().unis(
-                java.util.Arrays.stream(TipoPublicacion.values())
+                Arrays.stream(TipoPublicacion.values())
                         .map(tipo -> repository.contarPorTipo(tipo)
                                 .onItem().transform(cantidad -> new EstadisticaTipo(tipo, cantidad)))
                         .collect(Collectors.toList())
@@ -98,7 +99,7 @@ public class PublicacionResource {
                     pub.visibilidad = datos.visibilidad;
                     return repository.update(pub).onItem().transform(v -> Response.ok(pub).build());
                 })
-                .onItem().ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @DELETE

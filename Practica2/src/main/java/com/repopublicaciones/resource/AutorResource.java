@@ -28,7 +28,7 @@ public class AutorResource {
     public Uni<Response> buscarPorId(@PathParam("id") String id) {
         return repository.findById(new ObjectId(id))
                 .onItem().ifNotNull().transform(autor -> Response.ok(autor).build())
-                .onItem().ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @POST
@@ -49,7 +49,7 @@ public class AutorResource {
                     autor.areasDeInteres = datos.areasDeInteres;
                     return repository.update(autor).onItem().transform(v -> Response.ok(autor).build());
                 })
-                .onItem().ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @DELETE
