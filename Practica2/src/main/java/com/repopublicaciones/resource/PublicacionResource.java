@@ -67,14 +67,13 @@ public class PublicacionResource {
     @GET
     @Path("/estadisticas")
     public Uni<List<EstadisticaTipo>> estadisticas() {
-        return Uni.combine().all().unis(
+        return Uni.join().all(
                 Arrays.stream(TipoPublicacion.values())
                         .map(tipo -> repository.contarPorTipo(tipo)
                                 .onItem().transform(cantidad -> new EstadisticaTipo(tipo, cantidad)))
                         .collect(Collectors.toList())
-        ).with(lista -> lista.stream()
-                .map(o -> (EstadisticaTipo) o)
-                .collect(Collectors.toList()));
+        ).usingConcurrencyOf(4)
+                .andCollectFailures();
     }
 
     @POST
