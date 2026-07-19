@@ -32,5 +32,4 @@ public class EventoEducativo {
     @NotNull
     private Instant timestamp;
 
-
 }
